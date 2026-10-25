@@ -225,14 +225,14 @@ def run_astro_app(start_date_str, end_date_str, asset_mode):
 # Streamlit App Execution
 def main():
     st.set_page_config(page_title="Astro Terminal", page_icon="🔮")
-    st.title("🔮 Private XAUUSD & STOCK Astro Reversal Terminal")
+    st.title("🔮 XAUUSD & STOCK Astro Reversal Terminal")
 
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
     # Login Screen
     if not st.session_state['logged_in']:
-        st.warning("🔒 Private Astro Terminal: Kripya apni Authorized Gmail ID aur Access Password dalein.")
+        st.warning("🔒 FOMOKILLER Astro Terminal: Kripya apni Authorized Gmail ID aur Access Password dalein.")
         with st.form("login_form"):
             username = st.text_input("Username (Gmail ID)")
             password = st.text_input("Password", type="password")
