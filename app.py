@@ -198,7 +198,7 @@ def run_astro_app(start_date_str, end_date_str, asset_mode):
         curr_t = ist.localize(datetime.datetime(s_date.year, s_date.month, s_date.day, 9, 15, 0))
         end_t = ist.localize(datetime.datetime(e_date.year, e_date.month, e_date.day, 15, 30, 0))
 
-    lines = [f"=== {asset_mode} KP + SBC REVERSAL REPORT ({s_date.strftime('%d %b %Y')} to {e_date.strftime('%d %b %Y')}) ===\n"]
+    lines = [f"=== {asset_mode} ASTRO REVERSAL REPORT ({s_date.strftime('%d %b %Y')} to {e_date.strftime('%d %b %Y')}) ===\n"]
     prev_sub, last_tr = None, None
     
     while curr_t <= end_t:
@@ -214,9 +214,9 @@ def run_astro_app(start_date_str, end_date_str, asset_mode):
                 m_nak, kp_h, v_str, tr, w_end, p_str = evaluate_signal(jd, curr_t, star_l, curr_sub, sub_sp, last_tr, asset_mode)
                 last_tr = tr
                 lines.append(
-                    f"रिवर्सल टाइम: {curr_t.strftime('%d %b %Y, %I:%M %p')} (वेव अंत: {w_end.strftime('%I:%M %p')}) | "
-                    f"संकेत: {tr} | टारगेट: {p_str} | सब-लॉर्ड: {curr_sub} ({m_nak}) | KP भाव: {kp_h} | वेध: {v_str}"
-                )
+                f"रिवर्सल टाइम: {curr_t.strftime('%d %b %Y, %I:%M %p')} (वेव अंत: {w_end.strftime('%I:%M %p')}) | "
+                f"संकेत: {tr} | टारगेट: {p_str} | सब-लॉर्ड: {curr_sub} ({m_nak}) | KP भाव: {kp_h} | वेध: {v_str}"
+            )
         prev_sub = curr_sub
         curr_t += datetime.timedelta(minutes=1)
         
@@ -225,7 +225,7 @@ def run_astro_app(start_date_str, end_date_str, asset_mode):
 # Streamlit App Execution
 def main():
     st.set_page_config(page_title="Astro Terminal", page_icon="🔮")
-    st.title("🔮 XAUUSD & STOCK Astro Reversal Terminal")
+    st.title("🔮 XAUUSD Astro Reversal Terminal")
 
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
@@ -263,7 +263,7 @@ def main():
     with st.form("astro_form"):
         start_date = st.text_input("Start Date (YYYY-MM-DD)", value="2026-10-26")
         end_date = st.text_input("End Date (YYYY-MM-DD)", value="2026-10-31")
-        market = st.radio("Select Market", options=["XAUUSD", "STOCK"], horizontal=True)
+        market = "XAUUSD"
         generate = st.form_submit_button("Generate Report")
         
     if generate:
