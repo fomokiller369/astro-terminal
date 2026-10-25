@@ -216,10 +216,10 @@ def run_astro_app(start_date_str, end_date_str):
             m_nak, kp_h, v_str, tr, w_end, p_str = evaluate_signal_btc(jd, curr_t, star_l, curr_sub, sub_sp, last_tr)
             last_tr = tr
             lines.append(
-                f"रिवर्सल टाइम: **{curr_t.strftime('%d %b %Y, %I:%M %p')}** (वेव अंत: {w_end.strftime('%I:%M %p')}) |  \n"
+                f"BTCUSD रिवर्सल टाइम: **{curr_t.strftime('%d %b %Y, %I:%M %p')}** (वेव अंत: {w_end.strftime('%I:%M %p')}) |  \n"
                 f"संकेत: {tr} |  \n"
                 f"टारगेट: {p_str} |  \n"
-                f"सब-लॉर्ड: {curr_sub} ({m_nak}) | वेध: {v_str}\n\n"
+                f"सब-लॉर्ड: {curr_sub} | \n\n"
             )
         prev_sub = curr_sub
         curr_t += datetime.timedelta(minutes=1)
