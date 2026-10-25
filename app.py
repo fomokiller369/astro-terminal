@@ -173,7 +173,7 @@ def evaluate_signal(jd, dt_ist, moon_star, sublord, sub_span, last_trend, asset_
     base_map = {'Sun': 150, 'Mars': 210, 'Jupiter': 270, 'Mercury': 250}
     avg_max = base_map.get(sublord, 190)
     p_low, p_high = max(100, int(round((avg_max * 0.65) / 10.0) * 10)), max(160, int(round((avg_max * 1.15) / 10.0) * 10))
-    pips_str = f"{p_low}-{p_high}p (${p_low//10}-${p_high//10}) | SL:50p (Flip Tgt:150p)"
+    pips_str = f"{p_low}-{p_high} Pips (${p_low//10}-${p_high//10}) | SL:50pips (Flip Tgt:150pips)"
     vedha_str = ", ".join(vedha_list) if vedha_list else "Clean"
     return moon_nak, kp_houses, vedha_str, trend, wave_end, pips_str
 
@@ -214,9 +214,11 @@ def run_astro_app(start_date_str, end_date_str, asset_mode):
                 m_nak, kp_h, v_str, tr, w_end, p_str = evaluate_signal(jd, curr_t, star_l, curr_sub, sub_sp, last_tr, asset_mode)
                 last_tr = tr
                 lines.append(
-                f"रिवर्सल टाइम: **{curr_t.strftime('%d %b %Y, %I:%M %p')}** (वेव अंत: {w_end.strftime('%I:%M %p')}) |\n "
-                f"संकेत: {tr} |\n टारगेट: {p_str} |\n सब-लॉर्ड: {curr_sub}\n"
-            )
+                    f"रिवर्सल टाइम: **{curr_t.strftime('%d %b %Y, %I:%M %p')}** (वेव अंत: {w_end.strftime('%I:%M %p')}) |  \n"
+                    f"संकेत: {tr} |  \n"
+                    f"टारगेट: {p_str} |  \n"
+                    f"सब-लॉर्ड: {curr_sub}\n\n"
+                )
         prev_sub = curr_sub
         curr_t += datetime.timedelta(minutes=1)
         
