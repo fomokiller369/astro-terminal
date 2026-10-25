@@ -215,7 +215,7 @@ def run_astro_app(start_date_str, end_date_str, asset_mode):
                 last_tr = tr
                 lines.append(
                 f"रिवर्सल टाइम: {curr_t.strftime('%d %b %Y, %I:%M %p')} (वेव अंत: {w_end.strftime('%I:%M %p')}) | "
-                f"संकेत: {tr} | टारगेट: {p_str} | सब-लॉर्ड: {curr_sub} ({m_nak}) | KP भाव: {kp_h} | वेध: {v_str}"
+                f"संकेत: {tr} | टारगेट: {p_str} | सब-लॉर्ड: {curr_sub}"
             )
         prev_sub = curr_sub
         curr_t += datetime.timedelta(minutes=1)
