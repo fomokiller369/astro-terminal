@@ -214,8 +214,8 @@ def run_astro_app(start_date_str, end_date_str, asset_mode):
                 m_nak, kp_h, v_str, tr, w_end, p_str = evaluate_signal(jd, curr_t, star_l, curr_sub, sub_sp, last_tr, asset_mode)
                 last_tr = tr
                 lines.append(
-                f"रिवर्सल टाइम: {curr_t.strftime('%d %b %Y, %I:%M %p')} (वेव अंत: {w_end.strftime('%I:%M %p')}) | "
-                f"संकेत: {tr} | टारगेट: {p_str} | सब-लॉर्ड: {curr_sub}\n"
+                f"रिवर्सल टाइम: {curr_t.strftime('%d %b %Y, %I:%M %p')} (वेव अंत: {w_end.strftime('%I:%M %p')}) |\n "
+                f"संकेत: {tr} |\n टारगेट: {p_str} |\n सब-लॉर्ड: {curr_sub}\n"
             )
         prev_sub = curr_sub
         curr_t += datetime.timedelta(minutes=1)
