@@ -173,7 +173,7 @@ def evaluate_signal(jd, dt_ist, moon_star, sublord, sub_span, last_trend, asset_
     base_map = {'Sun': 150, 'Mars': 210, 'Jupiter': 270, 'Mercury': 250}
     avg_max = base_map.get(sublord, 190)
     p_low, p_high = max(100, int(round((avg_max * 0.65) / 10.0) * 10)), max(160, int(round((avg_max * 1.15) / 10.0) * 10))
-    pips_str = f"{p_low}-{p_high} Pips (Doller{p_low//10}-${p_high//10}) | SL:50pips (Flip Tgt:150pips)"
+    pips_str = f"{p_low}-{p_high} Pips (${p_low//10}-${p_high//10}) | SL:50pips (Flip Tgt:150pips)"
     vedha_str = ", ".join(vedha_list) if vedha_list else "Clean"
     return moon_nak, kp_houses, vedha_str, trend, wave_end, pips_str
 
