@@ -263,7 +263,7 @@ def main():
     with st.form("astro_form"):
         start_date = st.text_input("Start Date (YYYY-MM-DD)", value="2026-10-26")
         end_date = st.text_input("End Date (YYYY-MM-DD)", value="2026-10-31")
-        market = st.radio("Select Market", choices=["XAUUSD", "STOCK"], horizontal=True)
+        market = st.radio("Select Market", options=["XAUUSD", "STOCK"], horizontal=True)
         generate = st.form_submit_button("Generate Report")
         
     if generate:
