@@ -1,11 +1,9 @@
-import gradio as gr
+import streamlit as st
 import datetime
 import pytz
 import swisseph as swe
 
 # ================= 1. ALLOWED GMAIL IDs & PASSWORDS LIST =================
-# Yahan un Gmail IDs aur unke Passwords ki list dalein jinhe aap access dena chahte hain.
-# Jab bhi kisi naye vyakti ko jodne ya hatana ho, bas yahan list me naam add/delete karein:
 ALLOWED_GMAIL_USERS = [
     ("spiritualteam43@gmail.com", "admin999"),
     ("4tradingviews@gmail.com", "pass123"),
@@ -224,28 +222,54 @@ def run_astro_app(start_date_str, end_date_str, asset_mode):
         
     return "\n".join(lines)
 
-# Case-insensitive Gmail Check Function
-def check_gmail_login(username, password):
-    clean_user = username.strip().lower()
-    clean_pass = password.strip()
-    for allowed_email, allowed_pin in ALLOWED_GMAIL_USERS:
-        if clean_user == allowed_email.strip().lower() and clean_pass == allowed_pin:
-            return True
-    return False
+# Streamlit App Execution
+def main():
+    st.set_page_config(page_title="Astro Terminal", page_icon="🔮")
+    st.title("🔮 Private XAUUSD & STOCK Astro Reversal Terminal")
 
-app = gr.Interface(
-    fn=run_astro_app,
-    inputs=[
-        gr.Textbox(label="Start Date (YYYY-MM-DD)", value="2026-10-26"),
-        gr.Textbox(label="End Date (YYYY-MM-DD)", value="2026-10-31"),
-        gr.Radio(choices=["XAUUSD", "STOCK"], value="XAUUSD", label="Select Market")
-    ],
-    outputs=gr.Textbox(label="Reversal Time & Direction Report", lines=22),
-    title="🔮 Private XAUUSD & STOCK Astro Reversal Terminal"
-)
+    if 'logged_in' not in st.session_state:
+        st.session_state['logged_in'] = False
+
+    # Login Screen
+    if not st.session_state['logged_in']:
+        st.warning("🔒 Private Astro Terminal: Kripya apni Authorized Gmail ID aur Access Password dalein.")
+        with st.form("login_form"):
+            username = st.text_input("Username (Gmail ID)")
+            password = st.text_input("Password", type="password")
+            submitted = st.form_submit_button("Login")
+            
+            if submitted:
+                clean_user = username.strip().lower()
+                clean_pass = password.strip()
+                valid = False
+                for allowed_email, allowed_pin in ALLOWED_GMAIL_USERS:
+                    if clean_user == allowed_email.strip().lower() and clean_pass == allowed_pin:
+                        valid = True
+                        break
+                if valid:
+                    st.session_state['logged_in'] = True
+                    st.rerun()
+                else:
+                    st.error("Galat Username ya Password!")
+        return
+
+    # Main App Screen
+    col1, col2 = st.columns([4, 1])
+    with col2:
+        if st.button("Logout"):
+            st.session_state['logged_in'] = False
+            st.rerun()
+            
+    with st.form("astro_form"):
+        start_date = st.text_input("Start Date (YYYY-MM-DD)", value="2026-10-26")
+        end_date = st.text_input("End Date (YYYY-MM-DD)", value="2026-10-31")
+        market = st.radio("Select Market", choices=["XAUUSD", "STOCK"], horizontal=True)
+        generate = st.form_submit_button("Generate Report")
+        
+    if generate:
+        with st.spinner("Calculating Ephemeris Data..."):
+            result = run_astro_app(start_date, end_date, market)
+            st.text_area("Reversal Time & Direction Report", value=result, height=450)
 
 if __name__ == "__main__":
-    app.launch(
-        auth=check_gmail_login,
-        auth_message="🔒 Private Astro Terminal: Kripya apni Authorized Gmail ID (Username) aur Access Password dalein."
-    )
+    main()
