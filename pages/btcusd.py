@@ -16,7 +16,7 @@ DASHA_LORDS = ['Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 'Satur
 DASHA_YEARS = [7, 20, 6, 10, 7, 18, 16, 19, 17]
 
 # BTCUSD ke liye ab Sabhi 9 Grah (All Planets) chalu hain
-ALLOWED_SUBLORDS = {'Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 'Saturn', 'Mercury'}
+ALLOWED_SUBLORDS = {'Ketu', 'Rahu', 'Saturn'}
 
 RASHI_LORDS = [
     'Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury',
