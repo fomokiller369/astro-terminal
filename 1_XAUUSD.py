@@ -266,7 +266,7 @@ def main():
         start_date = st.text_input("Start Date (YYYY-MM-DD)", value="2026-10-26")
         end_date = st.text_input("End Date (YYYY-MM-DD)", value="2026-10-31")
         market = "XAUUSD"
-        generate = st.form_submit_button("Generate Report")
+        generate = st.form_submit_button("Generate XAUUSD Report")
         
     if generate:
         with st.spinner("Calculating Ephemeris Data..."):
