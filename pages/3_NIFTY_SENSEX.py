@@ -174,7 +174,7 @@ def main():
         with col_end:
             end_date = st.text_input("End Date (YYYY-MM-DD)", value="2026-10-31")
             
-        generate = st.form_submit_button("Generate Report")
+        generate = st.form_submit_button("Generate NIFTY/SENSEX Report")
         
     if generate:
         with st.spinner("Calculating Ephemeris Data..."):
