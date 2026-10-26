@@ -1,3 +1,5 @@
 streamlit
-pytz
 pyswisseph
+pytz
+pandas
+ephem
