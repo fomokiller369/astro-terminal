@@ -251,6 +251,7 @@ def main():
                         break
                 if valid:
                     st.session_state['logged_in'] = True
+                    st.session_state['username'] = clean_user  # <-- Yeh nayi line add karein
                     st.rerun()
                 else:
                     st.error("Galat Username ya Password!")
@@ -258,6 +259,25 @@ def main():
 
     # Main App Screen
     col1, col2 = st.columns([4, 1])
+    # --- NAYA SECURITY CHECK BLOCKER ---
+    # Current login user ka email nikalna
+    current_user = st.session_state.get('username', '')
+    
+    # Is BTCUSD page ki list mein jo emails allowed hain, unko nikalna
+    allowed_emails_for_btc = [user[0].strip().lower() for user in ALLOWED_GMAIL_USERS]
+    
+    # Agar current user is list me nahi hai, toh page load rok do
+    if current_user not in allowed_emails_for_btc:
+        st.error(f"🚫 Access Denied: '{current_user}' ko BTCUSD page dekhne ki permission nahi hai.")
+        
+        # Logout button de dein taaki wo switch kar sake
+        if st.button("Logout"):
+            st.session_state['logged_in'] = False
+            st.session_state['username'] = ""
+            st.rerun()
+            
+        st.stop() # Yeh command aage ka poora page block kar dega
+    # -----------------------------------
     with col2:
         if st.button("Logout"):
             st.session_state['logged_in'] = False
