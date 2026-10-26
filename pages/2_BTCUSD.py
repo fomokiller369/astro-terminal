@@ -272,12 +272,12 @@ def main():
         st.error(f"🚫 Access Denied: '{current_user}' ko BTCUSD page dekhne ki permission nahi hai.")
         
         # Logout button de dein taaki wo switch kar sake
-        if st.button("Logout"):
+        if st.button("Logout", key="logout_blocked"):
             st.session_state['logged_in'] = False
             st.session_state['username'] = ""
             st.rerun()
             
-        st.stop() # Yeh command aage ka poora page block kar dega
+        st.stop()  # 👈 YEH LINE ZAROOR ADD KAREIN (Button if block ke bahar)
     # -----------------------------------
     with col2:
         if st.button("Logout"):
