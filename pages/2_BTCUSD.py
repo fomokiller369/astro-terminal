@@ -251,7 +251,8 @@ def main():
                         break
                 if valid:
                     st.session_state['logged_in'] = True
-                    st.session_state['username'] = clean_user  # <-- Yeh nayi line add karein
+                    # 👇 YEH NAYI LINE ZAROOR ADD KAREIN 👇
+                    st.session_state['username'] = clean_user  
                     st.rerun()
                 else:
                     st.error("Galat Username ya Password!")
