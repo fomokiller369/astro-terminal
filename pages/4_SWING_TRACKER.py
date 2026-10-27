@@ -159,7 +159,7 @@ def generate_live_report(start_date_str, end_date_str):
 
 def main():
     st.set_page_config(page_title="Live Tracker", page_icon="⏱️", layout="wide")
-    st.title("⏱️ True Live Tracker (NIFTY/SENSEX & XAUUSD)")
+    st.title("⏱️ SWING TIME TRACKER FOR XAUUSD & NIFTY/SENSEX")
 
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
