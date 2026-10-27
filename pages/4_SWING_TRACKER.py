@@ -134,7 +134,7 @@ def generate_live_report(start_date_str, end_date_str):
     all_events.sort(key=lambda x: x['hora_start'])
 
     lines = []
-    lines.append(f"=== 📅 TRUE LIVE TRACKER REPORT (00:00 AM to 23:59 PM) ===")
+    lines.append(f"=== 📅 SWING TIME FOR XAUUSD & NIFTY/SENSEX REPORT (00:00 AM to 23:59 PM) ===")
     lines.append(f"अवधि: {s_date.strftime('%d %b %Y')} से {e_date.strftime('%d %b %Y')}\n")
 
     curr_d = s_date
@@ -214,7 +214,7 @@ def main():
         with col_end:
             end_date = st.text_input("End Date (YYYY-MM-DD)", value="2026-10-23")
             
-        generate = st.form_submit_button("Generate Tracker Report")
+        generate = st.form_submit_button("Generate Swing Time Report")
         
     if generate:
         with st.spinner("Calculating Live Planet Degrees & Horas..."):
