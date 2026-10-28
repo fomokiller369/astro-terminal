@@ -109,6 +109,10 @@ def get_horas_info(current_dt, target_planet):
                 jupiter_1st_night_time = f"**{h_start.strftime('%I:%M %p')}"
                 break
         
+        # TIME-2 (Night) par ** laga hai toh TIME-1 (Day) par bhi ** lagana hai
+        if target_1st_time and not target_1st_time.startswith("**"):
+            target_1st_time = f"**{target_1st_time}"
+            
         return target_1st_time, jupiter_1st_night_time
 
     # ==========================================
@@ -235,6 +239,21 @@ def main():
                         st.error(error)
                     else:
                         st.markdown("### 📊 Smart Timing Report")
+                        
+                        # Custom CSS for reducing Table Gapping
+                        st.markdown("""
+                        <style>
+                        div[data-testid="stTable"] table {
+                            width: auto !important;
+                            margin-left: 0 !important;
+                        }
+                        div[data-testid="stTable"] th, div[data-testid="stTable"] td {
+                            padding: 10px 40px !important;
+                            text-align: center !important;
+                        }
+                        </style>
+                        """, unsafe_allow_html=True)
+                        
                         st.table(df)
                         
         except Exception:
