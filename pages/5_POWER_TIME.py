@@ -89,22 +89,13 @@ def calculate_score(planet_name, p_details, day_lord):
     direction = "🟢 BULLISH" if score < 0 else "🔴 BEARISH"
     return score, direction
 
-def generate_power_report(start_date_str, end_date_str):
-    try:
-        start_dt = datetime.datetime.strptime(start_date_str.strip(), "%Y-%m-%d").date()
-        end_dt = datetime.datetime.strptime(end_date_str.strip(), "%Y-%m-%d").date()
-    except Exception:
-        return None, "⚠️ Kripya Date YYYY-MM-DD format me dalein."
-    
-    if start_dt > end_dt:
-        return None, "⚠️ Start Date, End Date se pehle ki honi chahiye!"
-
+def generate_power_report(start_dt, end_dt):
     delta = datetime.timedelta(days=1)
     current_dt = start_dt
     master_table = []
     
     while current_dt <= end_dt:
-        if current_dt.weekday() >= 5:
+        if current_dt.weekday() >= 5:  # Skip Weekends
             current_dt += delta
             continue
             
@@ -125,7 +116,6 @@ def generate_power_report(start_date_str, end_date_str):
         for h in range(12):
             h_planet = CHALDEAN_ORDER[(start_idx + h) % 7]
             h_start = sunrise + datetime.timedelta(seconds=h * day_hora_sec)
-            h_end = sunrise + datetime.timedelta(seconds=(h + 1) * day_hora_sec)
             h_mid = h_start + datetime.timedelta(seconds=day_hora_sec / 2.0)
             
             p_details = get_planet_details(h_mid, h_planet)
@@ -141,7 +131,7 @@ def generate_power_report(start_date_str, end_date_str):
             else: relation = "Neutral"
                 
             daily_horas.append({
-                "hora_num": h+1, "start": h_start, "end": h_end,
+                "start": h_start,
                 "planet": h_planet, "details": p_details,
                 "relation": relation, "direction": direction,
                 "impact": impact
@@ -153,7 +143,7 @@ def generate_power_report(start_date_str, end_date_str):
             
             master_table.append({
                 "Date & Lord": day_summary if i == 0 else "",
-                "Hora Time (IST)": f"Hora {h_data['hora_num']}: {h_data['start'].strftime('%I:%M %p')} - {h_data['end'].strftime('%I:%M %p')}",
+                "Time (IST)": f"{h_data['start'].strftime('%I:%M %p')}",
                 "Planet & Degree": f"{h_data['planet']} ({h_data['details']['degree']}°)",
                 "Motion & Dignity": f"{h_data['details']['motion_str']} | {h_data['details']['dignity']}",
                 "Relation w/ Lord": h_data['relation'],
@@ -170,12 +160,13 @@ def generate_power_report(start_date_str, end_date_str):
 
 # ================= 4. STREAMLIT APP =================
 def main():
-    st.set_page_config(page_title="Power Hora", page_icon="⚡", layout="wide")
-    st.title("⚡ XAUUSD Power-Hora Astrology")
+    st.set_page_config(page_title="Power Astro", page_icon="⚡", layout="wide")
+    st.title("⚡ XAUUSD Power Astrology")
 
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
+    # Login System
     if not st.session_state['logged_in']:
         st.warning("🔒 Kripya apni Authorized Gmail ID aur Access Password dalein.")
         with st.form("login_form"):
@@ -199,6 +190,7 @@ def main():
                     st.error("Galat Username ya Password!")
         return
 
+    # Security Blocker
     current_user = st.session_state.get('username', '')
     allowed_emails = [user[0].strip().lower() for user in ALLOWED_GMAIL_USERS]
     
@@ -210,6 +202,7 @@ def main():
             st.rerun()
         st.stop()
 
+    # Main App UI
     col1, col2 = st.columns([8, 1])
     with col2:
         if st.button("Logout"):
@@ -217,24 +210,54 @@ def main():
             st.session_state['username'] = ""
             st.rerun()
             
+    # Calculate Date Restrictions dynamically based on Current Date
+    ist = pytz.timezone('Asia/Kolkata')
+    today = datetime.datetime.now(ist).date()
+    
+    # 1. Past Limit: 1st of the Previous Month
+    first_day_this_month = today.replace(day=1)
+    last_day_prev_month = first_day_this_month - datetime.timedelta(days=1)
+    min_date = last_day_prev_month.replace(day=1)
+    
+    # 2. Future Limit: Next Week Friday
+    days_to_next_monday = 7 - today.weekday()
+    next_monday = today + datetime.timedelta(days=days_to_next_monday)
+    max_date = next_monday + datetime.timedelta(days=4)
+            
     with st.form("power_form"):
         col_start, col_end = st.columns(2)
         with col_start:
-            start_date = st.text_input("Start Date (YYYY-MM-DD)", value="2026-10-22")
+            start_date = st.text_input("Start Date (YYYY-MM-DD)", value=today.strftime("%Y-%m-%d"))
         with col_end:
-            end_date = st.text_input("End Date (YYYY-MM-DD)", value="2026-10-23")
+            end_date = st.text_input("End Date (YYYY-MM-DD)", value=(today + datetime.timedelta(days=1)).strftime("%Y-%m-%d"))
             
         generate = st.form_submit_button("Generate Power Report")
         
     if generate:
-        with st.spinner("Calculating Planetary Dignities and Hora Powers..."):
-            df, error = generate_power_report(start_date, end_date)
+        try:
+            s_date = datetime.datetime.strptime(start_date.strip(), "%Y-%m-%d").date()
+            e_date = datetime.datetime.strptime(end_date.strip(), "%Y-%m-%d").date()
             
-            if error:
-                st.error(error)
+            # --- DATE RESTRICTION LOGIC ---
+            if s_date < min_date:
+                st.warning(f"⚠️ Warning: Aap sirf {min_date.strftime('%d %b %Y')} se Till Date ka hi data nikal sakte hain!")
+            elif e_date > max_date:
+                st.warning(f"⚠️ Warning: Aap future mein sirf {max_date.strftime('%d %b %Y')} (Next Week) tak ka hi data nikal sakte hain!")
+            elif s_date > e_date:
+                st.warning("⚠️ Start Date, End Date se pehle ki honi chahiye!")
             else:
-                st.markdown("### 📊 Power-Hora Astro Report")
-                st.dataframe(df, use_container_width=True, hide_index=True)
+                with st.spinner("Calculating Planetary Dignities and Powers..."):
+                    df, error = generate_power_report(s_date, e_date)
+                    
+                    if error:
+                        st.error(error)
+                    else:
+                        st.markdown("### 📊 Power Astro Report")
+                        # st.table use karne se CSV download button hamesha ke liye hat jayega
+                        st.table(df)
+                        
+        except Exception:
+            st.error("⚠️ Kripya Date YYYY-MM-DD format me dalein.")
 
 if __name__ == "__main__":
     main()
