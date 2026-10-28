@@ -99,6 +99,27 @@ def generate_power_report(start_date_str, end_date_str):
     if start_dt > end_dt:
         return None, "⚠️ Start Date, End Date se pehle ki honi chahiye!"
 
+    # --- DATE RESTRICTION LOGIC ---
+    today = datetime.date.today()
+    
+    # Past Limit: 1st of Previous Month
+    first_of_this_month = today.replace(day=1)
+    last_month_date = first_of_this_month - datetime.timedelta(days=1)
+    past_limit = last_month_date.replace(day=1)
+    
+    # Future Limit: Next Week's Friday
+    days_to_next_monday = 7 - today.weekday()
+    next_monday = today + datetime.timedelta(days=days_to_next_monday)
+    next_friday = next_monday + datetime.timedelta(days=4)
+    future_limit = next_friday
+
+    if start_dt < past_limit:
+        return None, f"⚠️ Warning: Aap sirf {past_limit.strftime('%d %b %Y')} se Till Date ka hi data nikal sakte hain."
+        
+    if end_dt > future_limit:
+        return None, f"⚠️ Warning: Aap maximum Next Week ({next_monday.strftime('%d %b %Y')} se {next_friday.strftime('%d %b %Y')}) tak ka hi data nikal sakte hain."
+    # ------------------------------
+
     delta = datetime.timedelta(days=1)
     current_dt = start_dt
     master_table = []
@@ -125,7 +146,6 @@ def generate_power_report(start_date_str, end_date_str):
         for h in range(12):
             h_planet = CHALDEAN_ORDER[(start_idx + h) % 7]
             h_start = sunrise + datetime.timedelta(seconds=h * day_hora_sec)
-            h_end = sunrise + datetime.timedelta(seconds=(h + 1) * day_hora_sec)
             h_mid = h_start + datetime.timedelta(seconds=day_hora_sec / 2.0)
             
             p_details = get_planet_details(h_mid, h_planet)
@@ -141,7 +161,7 @@ def generate_power_report(start_date_str, end_date_str):
             else: relation = "Neutral"
                 
             daily_horas.append({
-                "hora_num": h+1, "start": h_start, "end": h_end,
+                "start": h_start,
                 "planet": h_planet, "details": p_details,
                 "relation": relation, "direction": direction,
                 "impact": impact
@@ -153,7 +173,7 @@ def generate_power_report(start_date_str, end_date_str):
             
             master_table.append({
                 "Date & Lord": day_summary if i == 0 else "",
-                "Hora Time (IST)": f"Hora {h_data['hora_num']}: {h_data['start'].strftime('%I:%M %p')} - {h_data['end'].strftime('%I:%M %p')}",
+                "Time (IST)": f"{h_data['start'].strftime('%I:%M %p')}",
                 "Planet & Degree": f"{h_data['planet']} ({h_data['details']['degree']}°)",
                 "Motion & Dignity": f"{h_data['details']['motion_str']} | {h_data['details']['dignity']}",
                 "Relation w/ Lord": h_data['relation'],
@@ -170,8 +190,21 @@ def generate_power_report(start_date_str, end_date_str):
 
 # ================= 4. STREAMLIT APP =================
 def main():
-    st.set_page_config(page_title="Power Hora", page_icon="⚡", layout="wide")
-    st.title("⚡ XAUUSD Power-Hora Astrology")
+    st.set_page_config(page_title="Power Astro", page_icon="⚡", layout="wide")
+    
+    # --- CSS TO HIDE DOWNLOAD AS CSV & TOOLBAR ---
+    st.markdown(
+        """
+        <style>
+        [data-testid="stElementToolbar"] {
+            display: none;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    st.title("⚡ XAUUSD Power Astrology")
 
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
@@ -202,43 +235,4 @@ def main():
 
     # Security Blocker
     current_user = st.session_state.get('username', '')
-    allowed_emails = [user[0].strip().lower() for user in ALLOWED_GMAIL_USERS]
-    
-    if current_user not in allowed_emails:
-        st.error(f"🚫 Access Denied: '{current_user}' ko yeh page dekhne ki permission nahi hai.")
-        if st.button("Logout", key="logout_blocked"):
-            st.session_state['logged_in'] = False
-            st.session_state['username'] = ""
-            st.rerun()
-        st.stop()
-
-    # Main App UI
-    col1, col2 = st.columns([8, 1])
-    with col2:
-        if st.button("Logout"):
-            st.session_state['logged_in'] = False
-            st.session_state['username'] = ""
-            st.rerun()
-            
-    with st.form("power_form"):
-        col_start, col_end = st.columns(2)
-        with col_start:
-            start_date = st.text_input("Start Date (YYYY-MM-DD)", value="2026-10-22")
-        with col_end:
-            end_date = st.text_input("End Date (YYYY-MM-DD)", value="2026-10-23")
-            
-        generate = st.form_submit_button("Generate Power Report")
-        
-    if generate:
-        with st.spinner("Calculating Planetary Dignities and Hora Powers..."):
-            df, error = generate_power_report(start_date, end_date)
-            
-            if error:
-                st.error(error)
-            else:
-                st.markdown("### 📊 Power-Hora Astro Report")
-                # Hide the index column and render the dataframe
-                st.dataframe(df, use_container_width=True, hide_index=True)
-
-if __name__ == "__main__":
-    main()
+    allowed_emails = [user[0].strip().lower() for user in ALLOWED
