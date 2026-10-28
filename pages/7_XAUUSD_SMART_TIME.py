@@ -96,24 +96,23 @@ def get_horas_info(current_dt, target_planet):
             fallback_enemy_last_idx = h
             fallback_enemy_last_time = time_str
 
+    is_special = False
+    
     # ==========================================
     # SPECIAL RULE: TUESDAY & JUPITER
     # ==========================================
     if current_dt.weekday() == 1 and target_planet == "Jupiter":
         jupiter_1st_night_time = None
-        # Raat ki 12 Horas me Jupiter ko dhoondho
         for h in range(12):
             h_start = sunset + datetime.timedelta(seconds=h * night_hora_sec)
             h_planet = CHALDEAN_ORDER[(start_idx + 12 + h) % 7]
             if h_planet == "Jupiter" and jupiter_1st_night_time is None:
-                jupiter_1st_night_time = f"**{h_start.strftime('%I:%M %p')}"
+                # Sirf simple time nikalenge, Bold karne ka logic aage hai
+                jupiter_1st_night_time = f"{h_start.strftime('%I:%M %p')}"
                 break
         
-        # TIME-2 (Night) par ** laga hai toh TIME-1 (Day) par bhi ** lagana hai
-        if target_1st_time and not target_1st_time.startswith("**"):
-            target_1st_time = f"**{target_1st_time}"
-            
-        return target_1st_time, jupiter_1st_night_time
+        is_special = True
+        return target_1st_time, jupiter_1st_night_time, is_special
 
     # ==========================================
     # NORMAL LOGIC (With Fallback)
@@ -123,7 +122,7 @@ def get_horas_info(current_dt, target_planet):
     else:
         final_enemy_time = fallback_enemy_last_time
                 
-    return target_1st_time, final_enemy_time
+    return target_1st_time, final_enemy_time, is_special
 
 def run_smart_time_report(start_dt, end_dt):
     delta = datetime.timedelta(days=1)
@@ -138,12 +137,22 @@ def run_smart_time_report(start_dt, end_dt):
         calc_time_ist = TZ.localize(datetime.datetime.combine(current_dt, datetime.time(3, 30, 0)))
         target_planet, p_deg = get_2nd_rank_planet(calc_time_ist)
         
-        target_1st_day, enemy_last_time = get_horas_info(current_dt, target_planet)
+        target_1st_day, enemy_last_time, is_special = get_horas_info(current_dt, target_planet)
+        
+        date_str = current_dt.strftime("%d %b %Y (%a)")
+        t1_str = target_1st_day if target_1st_day else "-"
+        t2_str = enemy_last_time if enemy_last_time else "-"
+        
+        # Yahan HTML <b> tag lagaya gaya hai bold karne ke liye
+        if is_special:
+            date_str = f"<b>{date_str}</b>"
+            t1_str = f"<b>{t1_str}</b>"
+            t2_str = f"<b>{t2_str}</b>"
         
         master_table.append({
-            "Date & Day": current_dt.strftime("%d %b %Y (%a)"),
-            "TIME-1": target_1st_day if target_1st_day else "-",
-            "TIME-2": enemy_last_time if enemy_last_time else "-"
+            "Date & Day": date_str,
+            "TIME-1": t1_str,
+            "TIME-2": t2_str
         })
         current_dt += delta
 
@@ -240,21 +249,30 @@ def main():
                     else:
                         st.markdown("### 📊 Smart Timing Report")
                         
-                        # Custom CSS for reducing Table Gapping
+                        # --- Custom CSS for Clean, Compact & Centered Table ---
                         st.markdown("""
                         <style>
-                        div[data-testid="stTable"] table {
-                            width: auto !important;
-                            margin-left: 0 !important;
+                        .smart-table {
+                            width: 100% !important;
+                            max-width: 800px !important;
+                            border-collapse: collapse;
+                            margin: 15px 0;
                         }
-                        div[data-testid="stTable"] th, div[data-testid="stTable"] td {
-                            padding: 10px 40px !important;
+                        .smart-table th, .smart-table td {
+                            padding: 12px 30px !important;
                             text-align: center !important;
+                            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+                        }
+                        .smart-table th {
+                            font-size: 16px;
+                            color: #888;
                         }
                         </style>
                         """, unsafe_allow_html=True)
                         
-                        st.table(df)
+                        # Render DataFrame using HTML (No CSV Button, Parses Bold <b> tags)
+                        html_table = df.to_html(escape=False, index=False, classes="smart-table")
+                        st.markdown(html_table, unsafe_allow_html=True)
                         
         except Exception:
             st.error("⚠️ Kripya Date YYYY-MM-DD format me dalein.")
