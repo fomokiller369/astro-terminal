@@ -247,7 +247,7 @@ def main():
                     if error:
                         st.error(error)
                     else:
-                        st.markdown("### 📊 XAUUSD Smart Timing Report")
+                        st.markdown("### 📊 XAUUSD Smart Swing Timing Report")
                         
                         # --- Custom CSS for Clean, Compact & Centered Table ---
                         st.markdown("""
