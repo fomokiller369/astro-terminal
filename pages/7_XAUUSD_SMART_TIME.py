@@ -134,7 +134,8 @@ ALLOWED_GMAIL_USERS = [
     ("rahulpujari7686@gmail.com", "rahu9283ri"),
     ("ravindragirhepunje1978@gmail.com", "ravi9382je"),
     ("swapnanagilwar@gmail.com", "swap3928ar"),
-    ("deepakkumarthakur1313@gmail.com", "deep9283ur")
+    ("deepakkumarthakur1313@gmail.com", "deep9283ur"),
+    ("royaltrader3690@gmail.com", "roya9382er")
 ]
 
 # ================= 2. ASTROLOGY SETUP & CONSTANTS =================
