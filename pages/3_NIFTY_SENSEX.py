@@ -8,7 +8,8 @@ ALLOWED_GMAIL_USERS = [
     ("spiritualteam43@gmail.com", "admin999"),
     ("4tradingviews@gmail.com", "pass123"),
     ("spiritualteam27@gmail.com", "gold786"),
-    ("ravijaiswal1838@gmail.com", "xau2026")
+    ("ravijaiswal1838@gmail.com", "xau2026"),
+    ("lekhrajraut124@gmail.com", "lekhraj124lr")
 ]
 
 # ================= 2. ASTROLOGICAL CONSTANTS =================
